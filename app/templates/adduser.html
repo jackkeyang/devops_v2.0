@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %} 
+添加用户
+{% endblock %}
+{% block main %}
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-10">
+             <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>填写基本信息</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form id="userForm" class="form-horizontal nice-validator n-yellow" novalidate="novalidate">
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-8">
+                                <input id="username" name="username" placeholder="Username" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">姓名</label>
+                            <div class="col-sm-8">
+                                <input id="cn_name" name="cn_name" placeholder="Name" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-8">
+                                <input id="password" name="password" placeholder="Password" type="password" class="form-control" datatype="s6-16" errormsg="密码最少６个字符">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">重复密码</label>
+                            <div class="col-sm-8">
+                                <input id="re_password" name="re_password" placeholder="Password" type="password" class="form-control" datatype="s6-16" errormsg="密码最少６个字符">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="mobile" class="col-sm-2 control-label">手机号</label>
+                            <div class="col-sm-8">
+                                <input id="phone" name="phone" placeholder="Mobile" type="text" class="form-control" datatype="m" errormsg="手机格式错误">
+                             </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-2 control-label">Email</label>
+                            <div class="col-sm-8">
+                                <input id="email" name="email" type="email" placeholder="username@usuretech.org" class="form-control" datatype="e" errormsg="邮箱格式错误">
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="role" class="col-sm-2 control-label">权限</label>
+                            <div class="col-sm-8">
+
+                                <div class="col-sm-3">
+                                    <div class="radio i-checks">
+                                        <label><input type="radio" value="user" class="role" name="role" checked="">普通用户</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="radio i-checks">
+                                        <label><input type="radio" value="admin" class="role" name="role">超级管理员</label>
+                                    </div>
+                                </div>
+
+                             </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">状态</label>
+                            <div class="col-sm-8">
+                                <div class="col-sm-3">
+                                    <div class="radio i-checks">
+                                        <label><input type="radio" value="0" name="status" checked="">启用</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <div class="radio i-checks">
+                                        <label><input type="radio" value="1" name="status">禁用</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-4">
+                                <button class="btn btn-white" type="reset">取消</button>
+                                <button id="submit_button" class="btn btn-primary">确认保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+$("#submit_button").click(function () {
+    $.post("/adduser",$("#userForm").serialize(),function (data) {
+        data=JSON.parse(data)
+        if(data["code"]==0){
+            location.href="/userlist"
+        }else{
+            swal("ERROR",data["errmsg"],"error")
+        }
+    })
+    return false
+})
+</script>
+{% endblock %}
