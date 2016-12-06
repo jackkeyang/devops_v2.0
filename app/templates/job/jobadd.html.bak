@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block breadcrumb %}
+工单申请
+{% endblock %}
+
+{% block main %}
+<div class="col-sm-12">
+    <br />
+    <ul class="nav nav-tabs" id="myTab">
+        <li class="active">
+            <a href="#addpro" data-toggle="tab">新增项目</a>
+        </li>
+        <li><a href="#codeonline" data-toggle="tab">代码发布</a></li>
+        <li><a href="#db" data-toggle="tab">DB相关</a></li>
+        <li><a href="#other" data-toggle="tab">其他</a></li>
+    </ul>
+
+    <div id="tabcontent" class="tab-content">
+        <div class="tab-pane fade in active" id="addpro">
+            <div class="col-sm-10">
+                <div class="ibox-content">
+                    <form id="pro" class="form-horizontal nice-validator n-yellow" novalidate="novalidate">
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">应用系统名称:</label>
+                            <div class="col-sm-8">
+                                <input id="app_name" name="app_name" placeholder="APP Name" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">系统用途说明:</label>
+                            <div class="col-sm-8">
+                                <input id="app_purpose" name="app_purpose" placeholder="Name" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">开发语言:</label>
+                            <div class="col-sm-8">
+                                <input id="language" name="language" placeholder="JAVA / PHP" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">软件版本:</label>
+                            <div class="col-sm-8">
+                                <input id="soft_version" name="soft_version" placeholder="jdk1.7 | tomcat7 | php5.6 " type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">系统资源需求:</label>
+                            <div class="col-sm-8">
+                                <input id="sys_resource" name="sys_resource" placeholder="硬盘：50M，内存：2G" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">数据库信息:</label>
+                            <div class="col-sm-8">
+                                <input id="db_info" name="db_info" placeholder="数据库名:占用空间(erp:2G)" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">其他关联系统:</label>
+                            <div class="col-sm-8">
+                                <input id="other_relation" name="other_relation" placeholder="关联系统名(zkb)" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">系统使用人员:</label>
+                            <div class="col-sm-8">
+                                <input id="app_user" name="app_user" placeholder="内部人员" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-2 control-label">项目负责人:</label>
+                            <div class="col-sm-8">
+                                <input id="dever" name="dever" placeholder="XXX" type="text" class="form-control">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <h4>以下内容由运维人员填写</h4>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="codeonline">
+            代码发布
+        </div>
+        <div class="tab-pane fade" id="db">
+            DB相关
+        </div>
+        <div class="tab-pane fade" id="other">
+            其他
+        </div>
+    </div><!-- end tabcontent -->
+
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+	$('#myTab a').click(function (e) {
+      e.preventDefault()
+      $(this).tab('show')
+    })
+</script>
+{% endblock %}
