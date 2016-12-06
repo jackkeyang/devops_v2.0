@@ -6,5 +6,6 @@ from . import app
 from utils.public import *
 
 @app.route("/")
+@login_required
 def index():
     return my_render("index.html")

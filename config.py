@@ -6,10 +6,10 @@ class Config:
     SALT = "jack"
 
 class DevelopmentConfig(Config):
-    DB_HOST = "localhost"
-    DB_USER = "root"
+    DB_HOST = "172.16.0.93"
+    DB_USER = "flask"
     DB_PASSWD = "123456"
-    DB_NAME = "reboot"
+    DB_NAME = "flask"
     DB_POOL_MAX = 10
     DB_POOL_MIN = 1
 

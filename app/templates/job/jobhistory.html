@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block breadcrumb %}
-工单列表
+历史工单
 {% endblock %}
 
 {% block main %}
@@ -13,6 +13,8 @@
                 <th class="text-center">申请人</th>
                 <th class="text-center">工单类型</th>
                 <th class="text-center">申请时间</th>
+                <th class="text-center">处理时间</th>
+                <th class="text-center">处理人</th>
                 <th class="text-center">工单状态</th>
                 <th class="text-center">操作</th>
             </tr>
@@ -20,7 +22,7 @@
         <tbody>
         {% for job in jobs %}
             <tr class="gradeX">
-                <td class="text-center">{{ job.name }}</td>
+                <td class="text-center">{{ job.apply_name }}</td>
                 {% if job.job_type == 0 %}
                     <td class="text-center"  style='color:green'>新项目申请</td>
                 {% elif job.job_type == 1 %}
@@ -30,8 +32,9 @@
                 {% else %}
                     <td class="text-center"  style='color:green'>其他</td>
                 {% endif %}
-                <td class="text-center">{{ job.datetime }}</td>
-
+                <td class="text-center">{{ job.apply_date }}</td>
+                <td class="text-center">{{ job.deal_time }}</td>
+                <td class="text-center">{{ job.deal_persion }}</td>
                 {% if job.status == 0 %}
                     <td class="text-center" style='color:green'>申请中</td>
                 {% elif job.status == 1 %}
@@ -42,16 +45,38 @@
                     <td class="text-center" style='color:red'>未通过</td>
                 {% endif %}
                 <td class="text-center">
-                    <button data-id="{{job.id}}" class="btn btn-xs btn-primary deal">处理中</button>
-                    <button data-id="{{job.id}}" class="btn btn-xs btn-danger success">完成</button>
                     <button data-id='{{job.id}}' class='btn btn-xs btn-info detail'>详情</button>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
 </div>
+
+
+<!--详情模态窗-->
+<div class="modal fade" id='infoModel'>
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	     <h4 class="modal-title">详情</h4>
+    </div><!--header-->
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="control-label">工单详情</label>
+             <div class="controls">
+                 <span id="job_info"></span>
+            </div>
+        </div> <!--detail apply desc end-->
+    </div><!--body-->
+    <div class="modal-footer">
+      	<button type="button" class="btn btn-default update-cancel" data-dismiss="modal">关闭</button>
+   </div><!--footer-->
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 {% endblock %}
 
 {% block js %}
@@ -77,100 +102,14 @@ $(document).ready(function () {
         "order": [[2, "desc"],[0,"asc"]]
     })
 })
-//编辑用户弹出模态框,渲染数据
-$(".update").click(function () {
-    var id = $(this).attr("data-id")
-    $.getJSON("/getuser",{id:id},function (data) {
-        console.log(data)
-        $("#upid").val(data["id"])
-        $("#username").val(data["username"])
-        $("#cn_name").val(data["cn_name"])
-        $("#email").val(data["email"])
-        $("#phone").val(data["phone"])
-        if(data["role"] == "admin"){
-            $("#role_admin").attr("checked","")
-        }else{
-            $("#role_user").attr("checked","")
-        }
-        if(data["status"] == 0){
-            $("#static_on").attr("checked","")
-        }else{
-            $("#static_off").attr("checked","")
-        }
+
+//查看工单详情
+$(".detail").click(function () {
+    id=$(this).attr("data-id")
+    $.getJSON("/jobdetail",{"id":id},function(data){
+         $('#job_info').html('<pre>'+data['job_info']+'</pre>')
     })
-    $('#updateModal').modal('show')
-})
-
-//编辑用户，点击提交
-$("#upbtn").click(function () {
-    $.post("/getuser",$("#updateForm").serialize(),function (data) {
-        data = JSON.parse(data)
-        if(data["code"]==0){
-            location.href="/userlist"
-        }else{
-            swal("error","用户修改失败","error")
-        }
-    })
-    return false
-})
-
-//显示修改密码模态框
-$(".cgpasswd").click(function () {
-    var id=$(this).attr("data-id")
-    $("#passwdid").val(id)
-    $('#passwdModal').modal('show')
-})
-
-//修改密码
-$("#passwdbtn").click(function () {
-    $.post("/cgpasswd",$("#passwdForm").serialize(),function (data) {
-        data=JSON.parse(data)
-        if(data["code"]==0){
-            swal(
-            {
-                title:"密码修改成功",
-                text:"密码修改成功",
-                type:"success",
-                confirmButtonText:"确定",
-            },function(){
-                location.href="/userlist"
-            })
-        }
-    })
-})
-
-//删除用户
-$(".del").click(function () {
-    var id=$(this).attr("data-id")
-    swal(
-        {
-            title: "确定删除该用户吗?",
-            text: "",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "确定",
-            cancelButtonText: "退出",
-            closeOnConfirm: false
-        }, function(){
-            $.post("/deluser",{id:id},function (data) {
-                data = JSON.parse(data)
-                if(data["code"]==0){
-                    swal({
-                        title:"用户删除成功",
-                        text:"",
-                        type:"success",
-                        confirmButtonText: "确定"
-                    },function () {
-                        location.reload()
-                    })
-                }else{
-                    swal("用户删除失败","","error")
-                }
-            })
-
-        }
-    );
+    $('#infoModel').modal('show')
 })
 
 </script>

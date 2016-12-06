@@ -1,169 +1,81 @@
 {% extends "base.html" %}
 {% block breadcrumb %}
-用户列表
+工单列表
 {% endblock %}
 
 {% block main %}
 <div class="col-sm-12">
-    <a href="/adduser" class="btn btn-sm btn-primary" style="float:right"> 添加用户</a>
     <br />
     <br />
     <table class="table table-striped table-bordered table-hover " id="editable">
         <thead>
             <tr>
-                <th class="text-center">用户名</th>
-                <th class="text-center">姓名</th>
-                <th class="text-center">角色</th>
-                <th class="text-center">邮箱</th>
-                <th class="text-center">手机</th>
-                <th class="text-center">状态</th>
+                <th class="text-center">申请人</th>
+                <th class="text-center">工单类型</th>
+                <th class="text-center">申请时间</th>
+                <th class="text-center">工单状态</th>
                 <th class="text-center">操作</th>
             </tr>
         </thead>
         <tbody>
-        {% for user in users %}
+        {% for job in jobs %}
             <tr class="gradeX">
-                <td class="text-center"><a href="/userinfo?id={{user.id}}">{{user.username}}</a></td>
-                <td class="text-center">{{ user.cn_name }}</td>
-                {% if user.role == "admin" %}
-                    <td class="text-center">超级管理员</td>
+                <td class="text-center">{{ job.apply_name }}</td>
+                {% if job.job_type == 0 %}
+                    <td class="text-center"  style='color:green'>新项目申请</td>
+                {% elif job.job_type == 1 %}
+                    <td class="text-center"  style='color:green'>代码发布</td>
+                {% elif job.job_type == 2 %}
+                    <td class="text-center"  style='color:green'>DB相关</td>
                 {% else %}
-                    <td class="text-center">普通用户</td>
+                    <td class="text-center"  style='color:green'>其他</td>
                 {% endif %}
-                <td class="text-center">{{ user.email }}</td>
-                <td class="text-center">{{ user.phone }}</td>
-                {% if user.status == 0 %}
-                    <td class="text-center" style="color:green">正常</td>
+                <td class="text-center">{{ job.apply_date }}</td>
+
+                {% if job.status == 0 %}
+                    <td class="text-center" style='color:green'>申请中</td>
+                {% elif job.status == 1 %}
+                    <td class="text-center" style='color:deepskyblue'>处理中</td>
+                {% elif job.status == 2 %}
+                    <td class="text-center" style='color:blue'>完成</td>
                 {% else %}
-                    <td class="text-center" style="color:red">锁定</td>
+                    <td class="text-center" style='color:red'>未通过</td>
                 {% endif %}
                 <td class="text-center">
-                    <button data-id="{{user.id}}" class="btn btn-xs btn-info update">编辑</button>
-                    <button data-id="{{user.id}}" class="btn btn-xs btn-warning cgpasswd">修改密码</button>
-                    <button data-id="{{user.id}}" class="btn btn-xs btn-danger del ">删除</button>
+                    <button data-id="{{job.id}}" class="btn btn-xs btn-primary deal">处理中</button>
+                    <button data-id="{{job.id}}" class="btn btn-xs btn-danger success">完成</button>
+                    <button data-id='{{job.id}}' class='btn btn-xs btn-info detail'>详情</button>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
-    <!-- 更新用户模态框 -->
-    <div class="modal fade"  id ="updateModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title">更新用户信息</h4>
-                </div>
-                <div class="modal-body">
-                <form id="updateForm" class="form-horizontal nice-validator n-yellow" novalidate="novalidate">
-                    <input type="hidden" id='upid' name="id">
-                    <div class="form-group">
-                        <label for="username" class="col-sm-2 control-label">用户名<span class="red-fonts">*</span></label>
-                        <div class="col-sm-8">
-                            <input id="username" name="username" placeholder="用户名" type="text" class="form-control" readonly="">
-                        </div>
-                    </div><!--username-->
-                    <div class="hr-line-dashed"></div>
-                    <div class="form-group">
-                        <label for="name" class="col-sm-2 control-label">姓名<span class="red-fonts">*</span></label>
-                        <div class="col-sm-8">
-                            <input id="cn_name" name="cn_name" placeholder="中文名" type="text" class="form-control">
-                        </div>
-                    </div><!--cn_name-->
-                    <div class="hr-line-dashed"></div>
-                    <div class="form-group">
-                        <label for="mobile" class="col-sm-2 control-label">手机号<span class="red-fonts">*</span></label>
-                        <div class="col-sm-8">
-                            <input id="phone" name="phone" placeholder="手机号" class="form-control">
-                        </div>
-                    </div><!--mobile-->
-                    <div class="hr-line-dashed"></div>
-                    <div class="form-group">
-                        <label for="email" class="col-sm-2 control-label">邮箱<span class="red-fonts">*</span></label>
-                        <div class="col-sm-8">
-                            <input id="email" name="email" type="email" placeholder="邮箱" class="form-control">
-                        </div>
-                    </div><!--Email-->
-                    <div class="hr-line-dashed"></div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">角色<span class="red-fonts">*</span></label>
-                        <div class="col-sm-8">
-                            <div class="col-sm-4">
-                                <div class="radio i-checks">
-                                    <label><input id="role_admin" type="radio" value="admin" name="role">超级管理员</label>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="radio i-checks">
-                                    <label><input id="role_user" type="radio" value="user" name="role">普通用户</label>
-                                </div>
-                            </div>
-                        </div><!-- role -->
-                    </div>
-
-                    <div class="hr-line-dashed"></div>
-                    <div class="form-group">
-                    <label class="col-sm-2 control-label">状态<span class="red-fonts">*</span></label>
-                    <div class="col-sm-8">
-                        <div class="col-sm-4">
-                            <div class="radio i-checks">
-                                <label><input id="static_on" type="radio" value="0" name="status">启用</label>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="radio i-checks">
-                                <label><input id="static_off" type="radio" value="1" name="status">禁用</label>
-                            </div>
-                        </div>
-                    </div><!-- status -->
-                </div> <!-- modal-body -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="upbtn">确认</button>
-                </div>
-                </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 修改密码模态框 -->
-    <div class="modal fade" id="passwdModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title">修改密码</h4>
-          </div>
-          <form id="passwdForm" class="form-horizontal nice-validator n-yellow" novalidate="novalidate">
-          <div class="modal-body">
-                <input type="hidden" name="id" id="passwdid">
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">新密码<span class="red-fonts">*</span></label>
-                    <div class="col-sm-8">
-                        <input id="password" name="password" type="password" class="form-control" datatype="n6-16|s6-16" errormsg="必须输入6-16位字母或字符串">
-                    </div>
-                </div>
-                <div class="hr-line-dashed"></div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">确认密码<span class="red-fonts">*</span></label>
-                    <div class="col-sm-8">
-                        <input id="re_password" name="re_password" type="password" class="form-control" datatype="n|s" recheck="password" errormsg="两次输入密码不同">
-                    </div>
-                </div>
-          </div>
-          <div class="modal-footer">
-            <div class="col-sm-6 red-fonts" id="errmsg"></div>
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" id="passwdbtn">确认</button>
-          </div>
-           </form>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.修改密码模态框结束 -->
-
 </div>
+
+<!--详情模态窗-->
+<div class="modal fade" id='infoModel'>
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	     <h4 class="modal-title">详情</h4>
+    </div><!--header-->
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="control-label">工单详情</label>
+             <div class="controls">
+                 <span id="job_info"></span>
+            </div>
+        </div> <!--detail apply desc end-->
+    </div><!--body-->
+    <div class="modal-footer">
+      	<button type="button" class="btn btn-default update-cancel" data-dismiss="modal">关闭</button>
+   </div><!--footer-->
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 {% endblock %}
 
 {% block js %}
@@ -189,100 +101,36 @@ $(document).ready(function () {
         "order": [[2, "desc"],[0,"asc"]]
     })
 })
-//编辑用户弹出模态框,渲染数据
-$(".update").click(function () {
-    var id = $(this).attr("data-id")
-    $.getJSON("/getuser",{id:id},function (data) {
-        console.log(data)
-        $("#upid").val(data["id"])
-        $("#username").val(data["username"])
-        $("#cn_name").val(data["cn_name"])
-        $("#email").val(data["email"])
-        $("#phone").val(data["phone"])
-        if(data["role"] == "admin"){
-            $("#role_admin").attr("checked","")
-        }else{
-            $("#role_user").attr("checked","")
-        }
-        if(data["status"] == 0){
-            $("#static_on").attr("checked","")
-        }else{
-            $("#static_off").attr("checked","")
-        }
-    })
-    $('#updateModal').modal('show')
-})
 
-//编辑用户，点击提交
-$("#upbtn").click(function () {
-    $.post("/getuser",$("#updateForm").serialize(),function (data) {
-        data = JSON.parse(data)
-        if(data["code"]==0){
-            location.href="/userlist"
-        }else{
-            swal("error","用户修改失败","error")
-        }
-    })
-    return false
-})
-
-//显示修改密码模态框
-$(".cgpasswd").click(function () {
-    var id=$(this).attr("data-id")
-    $("#passwdid").val(id)
-    $('#passwdModal').modal('show')
-})
-
-//修改密码
-$("#passwdbtn").click(function () {
-    $.post("/cgpasswd",$("#passwdForm").serialize(),function (data) {
+//处理工单
+$(".deal").click(function(){
+    id=$(this).attr("data-id")
+    $.post("/jobupdate",{"id":id,"status":1},function(data){
         data=JSON.parse(data)
         if(data["code"]==0){
-            swal(
-            {
-                title:"密码修改成功",
-                text:"密码修改成功",
-                type:"success",
-                confirmButtonText:"确定",
-            },function(){
-                location.href="/userlist"
-            })
+            location.reload()
         }
     })
 })
 
-//删除用户
-$(".del").click(function () {
-    var id=$(this).attr("data-id")
-    swal(
-        {
-            title: "确定删除该用户吗?",
-            text: "",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "确定",
-            cancelButtonText: "退出",
-            closeOnConfirm: false
-        }, function(){
-            $.post("/deluser",{id:id},function (data) {
-                data = JSON.parse(data)
-                if(data["code"]==0){
-                    swal({
-                        title:"用户删除成功",
-                        text:"",
-                        type:"success",
-                        confirmButtonText: "确定"
-                    },function () {
-                        location.reload()
-                    })
-                }else{
-                    swal("用户删除失败","","error")
-                }
-            })
-
+//完成工单
+$(".success").click(function(){
+    id=$(this).attr("data-id")
+    $.post("/jobupdate",{"id":id,"status":2},function(data){
+        data=JSON.parse(data)
+        if(data["code"]==0){
+            location.reload()
         }
-    );
+    })
+})
+
+//查看工单详情
+$(".detail").click(function () {
+    id=$(this).attr("data-id")
+    $.getJSON("/jobdetail",{"id":id},function(data){
+         $('#job_info').html('<pre>'+data['job_info']+'</pre>')
+    })
+    $('#infoModel').modal('show')
 })
 
 </script>

@@ -37,13 +37,24 @@ class DB():
         self.connect_db()
         self.cur.execute(sql)
 
-    def get_list(self,table,fields):
+    def get_list(self,table,fields,where=None):
         '''
         table:表名
         fields：查询列,["id","username","password"]
         return : [{'username':'xxx','password':'123'},{xxxxxx},{}]
         '''
-        sql = "select %s from %s"%(",".join(fields),table)
+        if isinstance(where,dict) and where:
+            conditions = []
+            for k,v in where.items():
+                if isinstance(v, list):
+                    conditions.append("%s IN (%s)" % (k, ','.join(v)))
+                elif isinstance(v, str) or isinstance(v, unicode):
+                    conditions.append("%s='%s'" % (k, v))
+                elif isinstance(v, int):
+                    conditions.append("%s=%s" % (k, v))
+            sql = "select %s from %s where %s" % (",".join(fields),table,' AND '.join(conditions))
+        elif not where:
+            sql = "select %s from %s"%(",".join(fields),table)
         try:
             self.execute(sql)
             result = self.cur.fetchall()
@@ -52,8 +63,8 @@ class DB():
             else:
                 result = {}
             return result
-        except:
-            print "error"
+        except Exception,e:
+            print "error",e
         finally:
             self.close_db()
 
